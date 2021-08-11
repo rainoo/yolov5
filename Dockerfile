@@ -1,50 +1,35 @@
-# Start FROM Nvidia PyTorch image https://ngc.nvidia.com/catalog/containers/nvidia:pytorch
-FROM nvcr.io/nvidia/pytorch:21.05-py3
+# Start FROM PyTorch image
+FROM python:3.8
+
+# Maintainer
+MAINTAINER gaoyu<gaoyu@datatang.com>
 
 # Install linux packages
-RUN apt update && apt install -y zip htop screen libgl1-mesa-glx
-
-# Install python dependencies
-COPY requirements.txt .
-RUN python -m pip install --upgrade pip
-RUN pip uninstall -y nvidia-tensorboard nvidia-tensorboard-plugin-dlprof
-RUN pip install --no-cache -r requirements.txt coremltools onnx gsutil notebook
-RUN pip install --no-cache -U torch torchvision numpy
-# RUN pip install --no-cache torch==1.9.0+cu111 torchvision==0.10.0+cu111 -f https://download.pytorch.org/whl/torch_stable.html
+RUN apt update \
+    && apt install -y libgl1-mesa-glx \
+    && apt install -y libglib2.0-dev
 
 # Create working directory
-RUN mkdir -p /usr/src/app
+RUN mkdir -p /usr/src/app && mkdir /input && mkdir /result
+
+# Copy requirements.txt
+COPY requirements.txt /usr/src/app
+
+# Install python dependencies
 WORKDIR /usr/src/app
+RUN pip install --upgrade pip \
+    && pip install -r ./requirements.txt -i https://mirrors.aliyun.com/pypi/simple
 
 # Copy contents
 COPY . /usr/src/app
 
 # Set environment variables
-ENV HOME=/usr/src/app
+ENV WEIGHTS=$weights CONF=$conf
 
+# exec detector
+CMD ["python", "detect.py"]
 
-# Usage Examples -------------------------------------------------------------------------------------------------------
-
-# Build and Push
-# t=ultralytics/yolov5:latest && sudo docker build -t $t . && sudo docker push $t
-
-# Pull and Run
-# t=ultralytics/yolov5:latest && sudo docker pull $t && sudo docker run -it --ipc=host --gpus all $t
-
-# Pull and Run with local directory access
-# t=ultralytics/yolov5:latest && sudo docker pull $t && sudo docker run -it --ipc=host --gpus all -v "$(pwd)"/datasets:/usr/src/datasets $t
-
-# Kill all
-# sudo docker kill $(sudo docker ps -q)
-
-# Kill all image-based
-# sudo docker kill $(sudo docker ps -qa --filter ancestor=ultralytics/yolov5:latest)
-
-# Bash into running container
-# sudo docker exec -it 5a9b5863d93d bash
-
-# Bash into stopped container
-# id=$(sudo docker ps -qa) && sudo docker start $id && sudo docker exec -it $id bash
-
-# Clean up
-# docker system prune -a --volumes
+# docker build -t gaoyu/detect_cpu:v1 .
+# docker save -o /home/detect-v1.tar gaoyu/detect_cpu:v1
+# docker run -d -v /pic/input:/input -v /pic/result:/result gaoyu/detect_cpu:v1
+# docker run -it -v /pic/input:/input -v /pic/result:/result --env WEIGHTS=yolov5x6.pt --env CONF=0.2 gaoyu/detect_cpu:v1

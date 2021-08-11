@@ -157,7 +157,7 @@ class LoadImages:  # for inference
         if '*' in p:
             files = sorted(glob.glob(p, recursive=True))  # glob
         elif os.path.isdir(p):
-            files = sorted(glob.glob(os.path.join(p, '*.*')))  # dir
+            files = bianLi(p)
         elif os.path.isfile(p):
             files = [p]  # files
         else:
@@ -209,7 +209,8 @@ class LoadImages:  # for inference
         else:
             # Read image
             self.count += 1
-            img0 = cv2.imread(path)  # BGR
+            # img0 = cv2.imread(path)  # BGR
+            img0 = cv2.imdecode(np.fromfile(path, dtype=np.uint8), 1)  # GAOYU20210808
             assert img0 is not None, 'Image Not Found ' + path
             print(f'image {self.count}/{self.nf} {path}: ', end='')
 
@@ -987,3 +988,18 @@ def dataset_stats(path='coco128.yaml', autodownload=False, verbose=False, profil
     if verbose:
         print(json.dumps(stats, indent=2, sort_keys=False))
     return stats
+
+'''
+遍历文件夹：
+输入一个参数为根目录，
+如果根目录下有文件则打印文件（含路径）
+如果是目录则继续遍历
+'''
+def bianLi(rootDir):
+    fileList = []
+    for root, dirs, files in os.walk(rootDir):
+        for file in files:
+            fileList.append(os.path.join(root, file))
+        for dir in dirs:
+            bianLi(dir)
+    return fileList

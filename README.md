@@ -1,3 +1,14 @@
+<div>
+<p>
+使用yolov5匹配数加加Pro标注平台预识别，完成Docker封装。
+
+修改点：<br>
+1、针对多层级输入目录优化；<br>
+2、针对中文目录和中文文件名称优化；<br>
+3、针对Docker镜像过大问题，Dockerfile修改。<br>
+</p>
+</div>
+
 <div align="center">
 <p>
 <a align="left" href="https://ultralytics.com/yolov5" target="_blank">
