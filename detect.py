@@ -54,14 +54,17 @@ def run(weights='yolov5s.pt',  # model.pt path(s)
         ):
 
     # 从环境变量取得预训练模型
-    if not os.getenv("WEIGHTS") is None and len(os.getenv("WEIGHTS")) != 0:
-        weights = os.getenv("WEIGHTS")
+    if not os.getenv("weights") is None and len(os.getenv("weights")) != 0:
+        weights = os.getenv("weights")
 
     # 从环境变量取得置信度
-    if not os.getenv("CONF") is None and len(os.getenv("CONF")) != 0:
-        conf_thres = float(os.getenv("CONF"))
+    if not os.getenv("conf") is None and len(os.getenv("conf")) != 0:
+        conf_thres = float(os.getenv("conf"))
 
-    save_img = not nosave and not source.endswith('.txt')  # save inference images
+    # 不保存推理重绘图像
+    save_img = False
+    # save_img = not nosave and not source.endswith('.txt')  # save inference images
+
     webcam = source.isnumeric() or source.endswith('.txt') or source.lower().startswith(
         ('rtsp://', 'rtmp://', 'http://', 'https://'))
 
