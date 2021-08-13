@@ -289,10 +289,10 @@ def parse_opt():
 def main(opt):
     print(colorstr('gaoyu yyds!'))
     print(colorstr('detect: ') + ', '.join(f'{k}={v}' for k, v in vars(opt).items()))
-    if not os.getenv('WEIGHTS') is None and len(os.getenv("WEIGHTS")) != 0:
-        print(colorstr('env: weights = ') + os.getenv('WEIGHTS'))
-    if not os.getenv('CONF') is None  and len(os.getenv("CONF")) != 0:
-        print(colorstr('env: conf_thres = ') + os.getenv('CONF'))
+    if not os.getenv('weights') is None and len(os.getenv("weights")) != 0:
+        print(colorstr('env: weights = ') + os.getenv('weights'))
+    if not os.getenv('conf') is None  and len(os.getenv("conf")) != 0:
+        print(colorstr('env: conf_thres = ') + os.getenv('conf'))
 
     check_requirements(exclude=('tensorboard', 'thop'))
     run(**vars(opt))
