@@ -197,8 +197,8 @@ def run(weights='yolov5s.pt',  # model.pt path(s)
                         object_i = '{"type":"Feature","geometry":{"type":"ExtentPolygon",' \
                                    '"coordinates":[[%f,%f],[%f,%f],[%f,%f],[%f,%f],[%f,%f]]},' \
                                    '"properties":{"objectId":%d,"id":%d,"generateMode":2,' \
-                                   '"content":{"label":["%s"]}},"title":""}' \
-                                   % (x1, y1, x2, y2, x3, y3, x4, y4, x5, y5, index, index, label)
+                                   '"content":{"label":["%s"]}},"title":%d}' \
+                                   % (x1, y1, x2, y2, x3, y3, x4, y4, x5, y5, index, index, label, index)
 
                         obj_n = len(reversed(det))
                         object_i = object_i + "," if index < obj_n else object_i
@@ -214,6 +214,9 @@ def run(weights='yolov5s.pt',  # model.pt path(s)
                         plot_one_box(xyxy, im0, label=label, color=colors(c, True), line_thickness=line_thickness)
                         if save_crop:
                             save_one_box(xyxy, imc, file=save_dir / 'crops' / names[c] / f'{p.stem}.jpg', BGR=True)
+
+                with open(txt_path + '.json', 'a') as f:
+                    f.write(']}}')
 
             # Print time (inference + NMS)
             print(f'{s}Done. ({t2 - t1:.3f}s)')
