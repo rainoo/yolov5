@@ -9,6 +9,8 @@ import os
 import sys
 import time
 from pathlib import Path
+import base64
+import json
 
 import cv2
 import torch
@@ -53,13 +55,20 @@ def run(weights='yolov5s.pt',  # model.pt path(s)
         half=False,  # use FP16 half-precision inference
         ):
 
-    # 从环境变量取得预训练模型
-    if not os.getenv("weights") is None and len(os.getenv("weights")) != 0:
-        weights = os.getenv("weights")
+    # 从环境变量取得输入参数
+    if not os.getenv("WORKINFO") is None and len(os.getenv("WORKINFO")) != 0:
+        # 取的base64编码后字符串
+        WORKINFO = os.getenv("WORKINFO")
 
-    # 从环境变量取得置信度
-    if not os.getenv("conf") is None and len(os.getenv("conf")) != 0:
-        conf_thres = float(os.getenv("conf"))
+        # 将WORKINFO通过base64解码为字符串
+        str_workinfo = base64.b64decode(WORKINFO).decode("utf-8")
+
+        # 将str_workinfo序列化为json对象
+        json_workinfo = json.loads(str_workinfo)
+
+        # 取相应参数。预训练模型：weights；置信度：conf，如果为空则取默认值
+        weights = json_workinfo.get('weights', 'yolov5s.pt')
+        conf_thres = json_workinfo.get('conf', 0.25)
 
     # 不保存推理重绘图像
     save_img = False
@@ -257,7 +266,7 @@ def run(weights='yolov5s.pt',  # model.pt path(s)
 
 def parse_opt():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--weights', nargs='+', type=str, default='yolov5s6.pt', help='model.pt path(s)')
+    parser.add_argument('--weights', nargs='+', type=str, default='yolov5s.pt', help='model.pt path(s)')
     parser.add_argument('--source', type=str, default='/input', help='file/dir/URL/glob, 0 for webcam')
     parser.add_argument('--imgsz', '--img', '--img-size', type=int, default=640, help='inference size (pixels)')
     parser.add_argument('--conf-thres', type=float, default=0.25, help='confidence threshold')

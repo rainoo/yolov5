@@ -24,12 +24,12 @@ RUN pip install --upgrade pip \
 COPY . /usr/src/app
 
 # Set environment variables
-ENV weights=$weights conf=$conf
+ENV WORKINFO=$WORKINFO
 
 # exec detector
 CMD ["python", "detect.py"]
 
-# docker build -t gaoyu/detect_cpu:v1.1 .
-# docker save -o /home/detect-v1.1.tar gaoyu/detect_cpu:v1.1
-# docker run -d -v /pic/input:/input -v /pic/result:/result gaoyu/detect_cpu:v1.1
-# docker run -it -v /pic/input:/input -v /pic/result:/result --env weights=yolov5x6.pt --env conf=0.2 gaoyu/detect_cpu:v1.1
+# docker build -t gaoyu/detect_cpu:v2.0 .
+# docker save -o /home/detect-v2.0.tar gaoyu/detect_cpu:v2.0
+# docker run -d -v /pic/input:/input -v /pic/result:/result gaoyu/detect_cpu:v2.0
+# docker run -it -v /pic/input:/input -v /pic/result:/result --env WORKINFO=ewogICJ3ZWlnaHRzIjoieW9sb3Y1cy5wdCIsCiAgImNvbmYiOjAuMgp9 gaoyu/detect_cpu:v2.0
